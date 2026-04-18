@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -46,7 +47,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let sid = localStorage.getItem("session_id");
     if (!sid) {
-      sid = crypto.randomUUID();
+      // sid = crypto.randomUUID();
+      sid = uuidv4();
       localStorage.setItem("session_id", sid);
     }
     setSessionId(sid);

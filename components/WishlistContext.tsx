@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 import { useCart } from "./CartContext"; 
+import { v4 as uuidv4 } from "uuid";
 
 const BASE_URL   = process.env.NEXT_PUBLIC_API_BASE_URL;
 const DOMAIN_URL = process.env.NEXT_PUBLIC_DOMAIN;
@@ -39,7 +40,8 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let sid = localStorage.getItem("session_id");
     if (!sid) {
-      sid = crypto.randomUUID();
+      // sid = crypto.randomUUID();
+      sid = uuidv4();
       localStorage.setItem("session_id", sid);
     }
     setSessionId(sid);
