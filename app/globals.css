@@ -6335,3 +6335,130 @@ li{
 
 /* Nav active indicator */
 .hdr-nav-active { color: #cb8836 !important; }
+
+/* ── FSSAI + Lab Report ── */
+.pd-docs-row {
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+  .pd-docs-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.pd-fssai-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1.5px solid rgba(203,136,54,0.25);
+  border-radius: 10px;
+  padding: 10px 14px;
+  max-width: fit-content;
+}
+
+.pd-fssai-img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+
+.pd-lab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1.5px solid rgba(203,136,54,0.35);
+  border-radius: 10px;
+  padding: 11px 16px;
+  text-decoration: none;
+  max-width: fit-content;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.pd-lab-btn:hover {
+  border-color: #cb8836;
+  box-shadow: 0 3px 12px rgba(203,136,54,0.15);
+}
+
+.pd-lab-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(203,136,54,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cb8836;
+  flex-shrink: 0;
+}
+
+.pd-lab-text {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2b1a06;
+}
+
+.pd-lab-sub {
+  font-size: 11px;
+  color: #a89070;
+  margin-top: 2px;
+}
+
+/* ── Mobile fix: actions row ── */
+@media (max-width: 640px) {
+  .pd-actions-row {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pd-qty-control {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .pd-add-cart-btn {
+    flex: 2;
+    min-width: 0;
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .pd-wish-btn {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .pd-actions-row {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .pd-qty-control {
+    flex-shrink: 0;
+  }
+
+  .pd-add-cart-btn {
+    flex: 2 !important;
+    min-width: 0 !important;
+    padding: 11px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .pd-wish-btn {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+  }
+}
