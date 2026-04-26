@@ -40,7 +40,7 @@ export default function ProductCategories() {
   const [first, featured, ...rest] = categories;
 
   return (
-    <section className="bg-white py-12 px-4 md:px-12 padd-bottom">
+    <section className="py-12 px-4 md:px-12 padd-bottom">
       <TopHeading heading="Discover Our Essentials" />
 
       <div className="flex gap-4 items-stretch max-w-6xl mx-auto">

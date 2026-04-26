@@ -129,7 +129,7 @@ export default function AboutUs() {
           </div>
 
           {/* 4 cards in a single row */}
-          <div className="grid grid-cols-4 gap-5 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
             {logoElements.map((el, i) => (
               <div key={i} className="about-logo-card">
                 <div className="about-logo-card-img-wrap">

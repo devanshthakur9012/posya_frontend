@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export default function FounderNote() {
   return (
-    <section className="relative py-20 bg-white">
+    <section className="relative py-20">
       <div className="max-w-6xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
 
         {/* Left Content */}

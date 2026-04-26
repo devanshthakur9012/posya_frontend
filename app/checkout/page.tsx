@@ -4,12 +4,30 @@ import { useState, useEffect } from "react";
 import { useCart } from "@/components/CartContext";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { Trash2, Plus, Minus, ChevronRight, Tag, Truck, ShieldCheck } from "lucide-react";
+import { Trash2, Plus, Minus, Tag, Truck, ShieldCheck } from "lucide-react";
 import { validateRequired, validateEmail, validatePhone, validatePincode } from "@/app/utils/validate";
 import LoginRegisterModal from "@/components/LoginRegisterModal";
 import { loadRazorpayScript } from "../utils/loadRazorpay";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+// ✅ Moved OUTSIDE CheckoutPage so it's not recreated on every render
+// (defining it inside caused React to unmount/remount the input on every keystroke, losing focus)
+const Field = ({
+  label, name, type = "text", placeholder, error, value, onChange,
+}: {
+  label: string; name: string; type?: string; placeholder?: string;
+  error?: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => (
+  <div className="chk-field">
+    <label className="chk-label">{label}</label>
+    <input
+      type={type} name={name} placeholder={placeholder} value={value} onChange={onChange}
+      className={`chk-input ${error ? "chk-input--error" : ""}`}
+    />
+    {error && <p className="chk-error">{error}</p>}
+  </div>
+);
 
 export default function CheckoutPage() {
   const { cartItems, removeFromCart, updateQty, clearCart } = useCart();
@@ -37,14 +55,19 @@ export default function CheckoutPage() {
   };
   const { totalTax, taxDetails } = calculateTaxes();
 
-  const [form, setForm] = useState({ name: "", email: "", phone: "", address: "", order_notes: "", city: "", state: "", country: "India", pincode: "", payment: "cod", coupon: "" });
+  const [form, setForm] = useState({
+    name: "", email: "", phone: "", address: "", order_notes: "",
+    city: "", state: "", country: "India", pincode: "", payment: "cod", coupon: "",
+  });
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [shippingMethods, setShippingMethods] = useState<{ id: number; method_name: string; cost: number }[]>([]);
   const [selectedMethod, setSelectedMethod] = useState<{ id: number; method_name: string; cost: number } | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const capitalize = (str: string) => str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const detectShippingZone = async (updatedForm: typeof form) => {
     const { country, state, city } = updatedForm;
@@ -59,7 +82,10 @@ export default function CheckoutPage() {
       if (!res.ok || !data.success) { setShippingMethods([]); setSelectedMethod(null); return; }
       setShippingMethods(data.methods || []);
       if (data.methods?.length > 0) {
-        const cheapest = data.methods.reduce((prev: any, curr: any) => Number(curr.cost) < Number(prev.cost) ? curr : prev, data.methods[0]);
+        const cheapest = data.methods.reduce(
+          (prev: any, curr: any) => Number(curr.cost) < Number(prev.cost) ? curr : prev,
+          data.methods[0]
+        );
         setSelectedMethod(cheapest);
       } else setSelectedMethod(null);
     } catch { setShippingMethods([]); setSelectedMethod(null); }
@@ -92,10 +118,15 @@ export default function CheckoutPage() {
         total_amount: finalTotal, payment_method: form.payment, payment_status: form.payment === "cod" ? "pending" : "paid",
         shipping_address: { name: form.name, email: form.email, phone: form.phone, address: form.address, city: form.city, state: form.state, country: form.country, pincode: form.pincode, order_notes: form.order_notes },
         coupon: form.coupon || null, discount: appliedDiscount || 0,
-        shipping_method: selectedMethod ? selectedMethod.method_name : null, shipping_cost: selectedMethod ? selectedMethod.cost : 0,
+        shipping_method: selectedMethod ? selectedMethod.method_name : null,
+        shipping_cost: selectedMethod ? selectedMethod.cost : 0,
         tax_details: taxDetails, total_tax: totalTax, subtotal: totalPrice, payment_details: paymentDetails || null,
       };
-      const response = await fetch(`${BASE_URL}order`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(orderData) });
+      const response = await fetch(`${BASE_URL}order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(orderData),
+      });
       const data = await response.json();
       if (!response.ok || !data.success) { toast.error(data.message || "Failed to place order"); return null; }
       toast.success("Order placed successfully!");
@@ -113,21 +144,36 @@ export default function CheckoutPage() {
     const res = await loadRazorpayScript();
     if (!res) { toast.error("Razorpay SDK failed to load."); setIsProcessing(false); return; }
     try {
-      const orderRes = await fetch(`${BASE_URL}razorpay-order`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount: Math.round(finalTotal), order_id: Date.now() }) });
+      const orderRes = await fetch(`${BASE_URL}razorpay-order`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: Math.round(finalTotal), order_id: Date.now() }),
+      });
       const orderData = await orderRes.json();
       if (!orderData.success) throw new Error("Order creation failed");
       const options = {
-        key: orderData.key, amount: orderData.amount, currency: orderData.currency, name: "Posya", description: "Order Payment",
-        order_id: orderData.razorpay_order_id,
+        key: orderData.key, amount: orderData.amount, currency: orderData.currency,
+        name: "Posya", description: "Order Payment", order_id: orderData.razorpay_order_id,
         handler: async function (response: any) {
           try {
-            const verifyRes = await fetch(`${BASE_URL}razorpay-verify`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature }) });
+            const verifyRes = await fetch(`${BASE_URL}razorpay-verify`, {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
             const verifyData = await verifyRes.json();
             if (verifyData.success) {
-              const orderNumber = await placeOrder({ razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature });
+              const orderNumber = await placeOrder({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              });
               if (orderNumber) window.location.href = `/order-placed?order_number=${orderNumber}`;
             } else toast.error("Payment verification failed!");
-          } catch { toast.error("Payment verification failed!"); } finally { setIsProcessing(false); }
+          } catch { toast.error("Payment verification failed!"); }
+          finally { setIsProcessing(false); }
         },
         prefill: { name: form.name, email: form.email, contact: form.phone },
         theme: { color: "#cb8836" },
@@ -156,20 +202,13 @@ export default function CheckoutPage() {
       const data = await res.json();
       if (!data.success) { setAppliedDiscount(0); toast.error(data.message || "Invalid coupon"); return; }
       const coupon = data.coupon;
-      let discountAmount = coupon.type === "fixed" ? Number(coupon.value) : Math.min((subtotal * Number(coupon.value)) / 100, coupon.max_discount ? Number(coupon.max_discount) : Infinity);
+      const discountAmount = coupon.type === "fixed"
+        ? Number(coupon.value)
+        : Math.min((subtotal * Number(coupon.value)) / 100, coupon.max_discount ? Number(coupon.max_discount) : Infinity);
       setAppliedDiscount(discountAmount);
       toast.success(`Coupon applied: ₹${discountAmount.toFixed(2)} off`);
     } catch { toast.error("Failed to apply coupon"); }
   };
-
-  const Field = ({ label, name, type = "text", placeholder, error, extraOnChange }: any) => (
-    <div className="chk-field">
-      <label className="chk-label">{label}</label>
-      <input type={type} name={name} placeholder={placeholder} value={(form as any)[name]} onChange={(e) => { handleChange(e); extraOnChange?.(e); }}
-        className={`chk-input ${error ? "chk-input--error" : ""}`} />
-      {error && <p className="chk-error">{error}</p>}
-    </div>
-  );
 
   return (
     <main className="min-h-screen" style={{ background: "#f2eee9" }}>
@@ -181,7 +220,6 @@ export default function CheckoutPage() {
       </div>
 
       <div className="chk-page-wrap">
-
         <div className="chk-layout">
 
           {/* ── LEFT: Shipping form ── */}
@@ -193,38 +231,49 @@ export default function CheckoutPage() {
             </div>
 
             <div className="chk-fields-grid">
-              <Field label="Full Name" name="name" placeholder="Your full name" error={errors.name} />
-              <Field label="Email" name="email" type="email" placeholder="your@email.com" error={errors.email} />
-              <Field label="Phone Number" name="phone" placeholder="10-digit phone" error={errors.phone} />
-              <Field label="Pincode" name="pincode" placeholder="6-digit pincode" error={errors.pincode} />
+              <Field label="Full Name" name="name" placeholder="Your full name" error={errors.name}
+                value={form.name} onChange={handleChange} />
+              <Field label="Email" name="email" type="email" placeholder="your@email.com" error={errors.email}
+                value={form.email} onChange={handleChange} />
+              <Field label="Phone Number" name="phone" placeholder="10-digit phone" error={errors.phone}
+                value={form.phone} onChange={handleChange} />
+              <Field label="Pincode" name="pincode" placeholder="6-digit pincode" error={errors.pincode}
+                value={form.pincode} onChange={handleChange} />
             </div>
 
-            <Field label="Address" name="address" placeholder="House no, street, area" error={errors.address} />
+            <Field label="Address" name="address" placeholder="House no, street, area" error={errors.address}
+              value={form.address} onChange={handleChange} />
 
             <div className="chk-fields-grid chk-fields-grid--3">
               <div className="chk-field">
                 <label className="chk-label">City</label>
-                <input name="city" placeholder="City" value={form.city} className={`chk-input ${errors.city ? "chk-input--error" : ""}`}
-                  onChange={(e) => { const v = capitalize(e.target.value); setForm({ ...form, city: v }); detectShippingZone({ ...form, city: v }); }} />
+                <input name="city" placeholder="City" value={form.city}
+                  className={`chk-input ${errors.city ? "chk-input--error" : ""}`}
+                  onChange={(e) => { const v = capitalize(e.target.value); const updated = { ...form, city: v }; setForm(updated); detectShippingZone(updated); }} />
                 {errors.city && <p className="chk-error">{errors.city}</p>}
               </div>
               <div className="chk-field">
                 <label className="chk-label">State</label>
-                <input name="state" placeholder="State" value={form.state} className={`chk-input ${errors.state ? "chk-input--error" : ""}`}
-                  onChange={(e) => { const v = capitalize(e.target.value); setForm({ ...form, state: v }); detectShippingZone({ ...form, state: v }); }} />
+                <input name="state" placeholder="State" value={form.state}
+                  className={`chk-input ${errors.state ? "chk-input--error" : ""}`}
+                  onChange={(e) => { const v = capitalize(e.target.value); const updated = { ...form, state: v }; setForm(updated); detectShippingZone(updated); }} />
                 {errors.state && <p className="chk-error">{errors.state}</p>}
               </div>
               <div className="chk-field">
                 <label className="chk-label">Country</label>
-                <input name="country" placeholder="Country" value={form.country} className={`chk-input ${errors.country ? "chk-input--error" : ""}`}
-                  onChange={(e) => { const v = capitalize(e.target.value); setForm({ ...form, country: v }); detectShippingZone({ ...form, country: v }); }} />
+                <input name="country" placeholder="Country" value={form.country}
+                  className={`chk-input ${errors.country ? "chk-input--error" : ""}`}
+                  onChange={(e) => { const v = capitalize(e.target.value); const updated = { ...form, country: v }; setForm(updated); detectShippingZone(updated); }} />
                 {errors.country && <p className="chk-error">{errors.country}</p>}
               </div>
             </div>
 
             <div className="chk-field">
-              <label className="chk-label">Order Notes <span style={{ color: "#a89070", fontWeight: 400 }}>(optional)</span></label>
-              <textarea name="order_notes" placeholder="Any special instructions..." value={form.order_notes} onChange={handleChange} rows={3} className="chk-input chk-textarea" />
+              <label className="chk-label">
+                Order Notes <span style={{ color: "#a89070", fontWeight: 400 }}>(optional)</span>
+              </label>
+              <textarea name="order_notes" placeholder="Any special instructions..." value={form.order_notes}
+                onChange={handleChange} rows={3} className="chk-input chk-textarea" />
             </div>
 
             {/* Shipping method */}
@@ -235,7 +284,8 @@ export default function CheckoutPage() {
                 </div>
                 {shippingMethods.map((m) => (
                   <label key={m.id} className={`chk-method-option ${selectedMethod?.id === m.id ? "chk-method-option--active" : ""}`}>
-                    <input type="radio" name="shipping" checked={selectedMethod?.id === m.id} onChange={() => setSelectedMethod(m)} className="chk-radio" />
+                    <input type="radio" name="shipping" checked={selectedMethod?.id === m.id}
+                      onChange={() => setSelectedMethod(m)} className="chk-radio" />
                     <span>{m.method_name}</span>
                     <span className="chk-method-price">₹{Number(m.cost).toFixed(2)}</span>
                   </label>
@@ -253,14 +303,14 @@ export default function CheckoutPage() {
                 { id: "online", label: "Pay Online (UPI / Card / Netbanking)" },
               ].map((m) => (
                 <label key={m.id} className={`chk-method-option ${form.payment === m.id ? "chk-method-option--active" : ""}`}>
-                  <input type="radio" name="payment" value={m.id} checked={form.payment === m.id} onChange={(e) => setForm({ ...form, payment: e.target.value })} className="chk-radio" />
+                  <input type="radio" name="payment" value={m.id} checked={form.payment === m.id}
+                    onChange={(e) => setForm({ ...form, payment: e.target.value })} className="chk-radio" />
                   <span>{m.label}</span>
                 </label>
               ))}
               <img src="/images/razorpay.svg" alt="Razorpay" className="chk-razorpay-logo" />
             </div>
 
-            {/* Place order button */}
             {form.payment === "cod" ? (
               <button type="submit" className="chk-place-btn" disabled={isProcessing}>
                 {isProcessing ? "Processing..." : "Place Order →"}
@@ -283,7 +333,6 @@ export default function CheckoutPage() {
                 <span className="chk-step-num">3</span> Order Summary
               </div>
 
-              {/* Items list */}
               <div className="chk-items-list">
                 {cartItems.map((item) => (
                   <div key={`${item.id}-${item.variationId ?? 0}`} className="chk-item">
@@ -312,16 +361,15 @@ export default function CheckoutPage() {
               <div className="chk-coupon-row">
                 <div className="chk-coupon-wrap">
                   <Tag size={14} className="chk-coupon-icon" />
-                  <input type="text" name="coupon" placeholder="Coupon code" value={form.coupon} onChange={handleChange} className="chk-coupon-input" />
+                  <input type="text" name="coupon" placeholder="Coupon code" value={form.coupon}
+                    onChange={handleChange} className="chk-coupon-input" />
                 </div>
                 <button type="button" onClick={applyCoupon} className="chk-coupon-btn">Apply</button>
               </div>
 
               {/* Totals */}
               <div className="chk-totals">
-                <div className="chk-total-row">
-                  <span>Subtotal</span><span>₹{subtotal.toFixed(2)}</span>
-                </div>
+                <div className="chk-total-row"><span>Subtotal</span><span>₹{subtotal.toFixed(2)}</span></div>
                 <div className="chk-total-row">
                   <span>Shipping</span>
                   <span>{shipping === 0 ? <span style={{ color: "#22a065", fontWeight: 700 }}>Free</span> : `₹${shipping.toFixed(2)}`}</span>

@@ -1,19 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import TopHeading from "./TopHeading";
 import SectionLoader from "./SectionLoader";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const AUTOSCROLL_INTERVAL = 3000; // ms between auto-advances
 
 export default function ProductCategories() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(1); // center card starts at index 1
+  const [activeIndex, setActiveIndex] = useState(1);
+  const [isPaused, setIsPaused] = useState(false);
   const router = useRouter();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     fetch(`${BASE_URL}categories`)
@@ -25,20 +28,50 @@ export default function ProductCategories() {
       .finally(() => setLoading(false));
   }, []);
 
+  const next = useCallback(
+    () => setActiveIndex((i) => (i + 1) % categories.length),
+    [categories.length]
+  );
+
+  const prev = useCallback(
+    () => setActiveIndex((i) => (i - 1 + categories.length) % categories.length),
+    [categories.length]
+  );
+
+  // Autoscroll: starts when categories load, pauses on hover/interaction
+  useEffect(() => {
+    if (categories.length === 0) return;
+
+    if (!isPaused) {
+      intervalRef.current = setInterval(next, AUTOSCROLL_INTERVAL);
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [categories.length, isPaused, next]);
+
+  // Pause autoscroll temporarily after manual navigation, then resume
+  const manualNav = useCallback((action: () => void) => {
+    action();
+    setIsPaused(true);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    const resumeTimeout = setTimeout(() => setIsPaused(false), 5000);
+    return () => clearTimeout(resumeTimeout);
+  }, []);
+
   if (loading) return <SectionLoader count={3} shape="circle" />;
 
   if (categories.length === 0) {
-    return <p className="text-center py-8 text-gray-500 text-lg">No categories found</p>;
+    return (
+      <p className="text-center py-8 text-gray-500 text-lg">No categories found</p>
+    );
   }
 
   const goToShop = (categoryName: string) => {
     router.push(`/shop?category=${encodeURIComponent(categoryName)}`);
   };
 
-  const prev = () => setActiveIndex((i) => (i - 1 + categories.length) % categories.length);
-  const next = () => setActiveIndex((i) => (i + 1) % categories.length);
-
-  // Get visible indices: left, center, right
   const leftIdx = (activeIndex - 1 + categories.length) % categories.length;
   const centerIdx = activeIndex;
   const rightIdx = (activeIndex + 1) % categories.length;
@@ -50,13 +83,22 @@ export default function ProductCategories() {
   ];
 
   return (
-    <section className="bg-white py-12 px-4 md:px-12">
+    <section className="py-12 px-4 md:px-12">
       <TopHeading heading="Discover Our Essentials" />
 
-      <div className="cat-slider-wrap">
-
+      <div
+        className="cat-slider-wrap"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+      >
         {/* Prev button */}
-        <button className="cat-slider-btn cat-slider-btn--left" onClick={prev} aria-label="Previous">
+        <button
+          className="cat-slider-btn cat-slider-btn--left"
+          onClick={() => manualNav(prev)}
+          aria-label="Previous"
+        >
           <ChevronLeft size={22} />
         </button>
 
@@ -65,7 +107,11 @@ export default function ProductCategories() {
           {visibleCards.map(({ cat, pos }) => (
             <div
               key={`${cat.id}-${pos}`}
-              onClick={() => pos === "center" ? goToShop(cat.categoryName) : (pos === "left" ? prev() : next())}
+              onClick={() =>
+                pos === "center"
+                  ? goToShop(cat.categoryName)
+                  : manualNav(pos === "left" ? prev : next)
+              }
               className={`cat-card cat-card--${pos}`}
             >
               <Image
@@ -83,7 +129,10 @@ export default function ProductCategories() {
                 {pos === "center" && (
                   <button
                     className="cat-card-shop-btn"
-                    onClick={(e) => { e.stopPropagation(); goToShop(cat.categoryName); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToShop(cat.categoryName);
+                    }}
                   >
                     Shop Now →
                   </button>
@@ -94,7 +143,11 @@ export default function ProductCategories() {
         </div>
 
         {/* Next button */}
-        <button className="cat-slider-btn cat-slider-btn--right" onClick={next} aria-label="Next">
+        <button
+          className="cat-slider-btn cat-slider-btn--right"
+          onClick={() => manualNav(next)}
+          aria-label="Next"
+        >
           <ChevronRight size={22} />
         </button>
       </div>
@@ -104,7 +157,9 @@ export default function ProductCategories() {
         {categories.map((_, i) => (
           <button
             key={i}
-            onClick={() => setActiveIndex(i)}
+            onClick={() => {
+              manualNav(() => setActiveIndex(i));
+            }}
             className={`cat-dot ${i === activeIndex ? "cat-dot--active" : ""}`}
           />
         ))}

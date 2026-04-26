@@ -168,15 +168,6 @@ export default function ProductPage({ slug }: { slug: string }) {
         {/* ── TOP: Gallery + Info ── */}
         <div className="pd-product-grid">
           <div className="pd-gallery">
-            {allImages.length > 1 && (
-              <div className="pd-thumbs-rail">
-                {allImages.map((img: string, idx: number) => (
-                  <button key={idx} onClick={() => setMainImage(img)} className={`pd-thumb ${mainImage === img ? "pd-thumb--active" : ""}`}>
-                    <Image src={img} alt={`View ${idx + 1}`} fill className="object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
             <div className="pd-main-img-wrap" ref={imageContainerRef}
               onMouseEnter={() => setIsZoomed(true)} onMouseLeave={() => setIsZoomed(false)} onMouseMove={handleMouseMove}>
               {mainImage && (
@@ -187,6 +178,15 @@ export default function ProductPage({ slug }: { slug: string }) {
                 ? <div className="pd-badge pd-badge--instock"><Check size={12} /> In Stock</div>
                 : <div className="pd-badge pd-badge--outofstock">Out of Stock</div>}
             </div>
+            {allImages.length > 1 && (
+              <div className="pd-thumbs-rail">
+                {allImages.map((img: string, idx: number) => (
+                  <button key={idx} onClick={() => setMainImage(img)} className={`pd-thumb ${mainImage === img ? "pd-thumb--active" : ""}`}>
+                    <Image src={img} alt={`View ${idx + 1}`} fill className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="pd-info-col">

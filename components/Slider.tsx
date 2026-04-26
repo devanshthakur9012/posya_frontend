@@ -58,7 +58,7 @@ export default function Slider() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/20" />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
+      <div className="relative z-10 flex flex-col items-center top-40 h-full text-center text-white px-4">
 
         <p className="uppercase tracking-[0.3em] text-xs md:text-sm text-white/80 mb-4">
           Welcome to Posya

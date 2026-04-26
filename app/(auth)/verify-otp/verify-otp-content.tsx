@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { KeyRound, Mail, Phone } from "lucide-react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const DOMAIN_URL = process.env.NEXT_PUBLIC_DOMAIN;
@@ -30,17 +31,13 @@ export default function VerifyOtpContent() {
       if (!res.ok) throw new Error(data.message || "OTP verification failed");
 
       if (data.token && data.user) {
-        // Save token
         localStorage.setItem("token", data.token);
-
-        // Role-based redirect
         const role = data.user.role.toLowerCase();
         if (role === "admin" || role === "shop_manager") {
           router.push(`${DOMAIN_URL}admin`);
         } else {
           router.push("/dashboard");
         }
-
         toast.success("OTP verified! Logged in successfully.");
       } else {
         toast.success("OTP verified successfully! Please login.");
@@ -61,7 +58,6 @@ export default function VerifyOtpContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to resend OTP");
       toast.success("OTP resent successfully!");
@@ -73,42 +69,82 @@ export default function VerifyOtpContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-100 to-green-50 px-4">
-      <div className="max-w-md w-full bg-white shadow-2xl rounded-3xl p-8">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">Verify OTP</h2>
-        <p className="text-center text-gray-600 mb-4">
-          Enter the 4-digit OTP sent to <span className="font-semibold">{identifier}</span>
+    <div className="auth-page">
+      <div className="auth-card">
+
+        {/* Brand */}
+        <div className="auth-brand">
+          <p className="auth-brand-name">POSYA</p>
+          <p className="auth-brand-tag">Petal-born wellness</p>
+        </div>
+
+        <h1 className="auth-form-heading">Verify OTP</h1>
+        <p className="auth-form-sub">
+          Enter the 4-digit OTP sent to your{" "}
+          <span className="font-semibold">{identifier}</span>
         </p>
 
-        <form onSubmit={handleVerify} className="flex flex-col gap-4">
-          <input
-            type="text"
-            maxLength={4}
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-center text-xl tracking-widest"
-          />
+        <form onSubmit={handleVerify} className="auth-form">
 
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white p-3 rounded-xl font-semibold hover:bg-green-700 transition"
-            disabled={loading}
-          >
-            {loading ? "Verifying..." : "Verify OTP"}
+          {/* Identifier display */}
+          <div className="auth-field">
+            <div className="auth-input-wrap">
+              <span className="auth-input-icon">
+                {identifier.includes("@") ? <Mail size={16} /> : <Phone size={16} />}
+              </span>
+              <input
+                type="text"
+                value={identifier}
+                readOnly
+                className="auth-input opacity-60 cursor-not-allowed"
+              />
+            </div>
+          </div>
+
+          {/* OTP input */}
+          <div className="auth-field">
+            <div className="auth-input-wrap">
+              <span className="auth-input-icon"><KeyRound size={16} /></span>
+              <input
+                type="text"
+                placeholder="Enter 4-digit OTP"
+                maxLength={4}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                className="auth-input"
+                autoComplete="one-time-code"
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                Verifying...
+              </span>
+            ) : "Verify OTP"}
           </button>
         </form>
 
-        <p className="text-center text-gray-500 mt-4">
-          Didn't receive OTP?{" "}
-          <button
-            onClick={handleResend}
-            disabled={loading}
-            className="text-green-600 font-semibold hover:underline"
-          >
-            Resend OTP
-          </button>
+        {/* Resend */}
+        <button
+          className="auth-toggle-btn"
+          onClick={handleResend}
+          disabled={loading}
+        >
+          Didn't receive OTP? Resend →
+        </button>
+
+        {/* Back to login */}
+        <p className="auth-footer-text">
+          Remember your password?{" "}
+          <a href="/login" className="auth-footer-link">Back to Login</a>
         </p>
+
       </div>
     </div>
   );

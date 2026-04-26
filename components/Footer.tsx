@@ -2,7 +2,7 @@
 
 import { Instagram, Facebook, Twitter, Linkedin, Mail, Phone, MapPin } from "lucide-react";
 import Link from "next/link";
-import PosysLogo from "../public/images/12.png";
+import PosysLogo from "../public/images/l1.png";
 import Image from "next/image";
 
 export default function Footer() {
