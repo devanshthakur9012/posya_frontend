@@ -318,10 +318,10 @@ export default function CustomerDashboard() {
                           </td>
                           <td>
                             <div className="dash-action-btns">
-                              <a href={`/invoice/${o.order_number}`} target="_blank"
+                              {/* <a href={`/invoice/${o.order_number}`} target="_blank"
                                 className="dash-icon-btn dash-icon-btn--green" title="Download Invoice">
                                 <FileText size={14} />
-                              </a>
+                              </a> */}
                               <a href={`/track-order/${o.order_number}`}
                                 className="dash-icon-btn dash-icon-btn--dark" title="Track Order">
                                 <Truck size={14} />
