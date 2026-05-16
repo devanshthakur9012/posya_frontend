@@ -3,7 +3,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Heart, ShoppingCart, Star, Loader2, Check, Minus, Plus, Package, Truck, MapPin, ChevronRight, Play, ChevronDown, FileText } from "lucide-react";
+import {
+  Heart, ShoppingCart, Star, Loader2, Check, Minus, Plus,
+  Package, Truck, MapPin, ChevronRight, Play, FileText,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import { useCart } from "@/components/CartContext";
 import { useWishlist } from "@/components/WishlistContext";
@@ -35,7 +38,6 @@ export default function ProductPage({ slug }: { slug: string }) {
   const [checkingDelivery, setCheckingDelivery] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
-  const [openQuestion, setOpenQuestion] = useState<number | null>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoPlaying, setVideoPlaying] = useState(false);
@@ -157,13 +159,18 @@ export default function ProductPage({ slug }: { slug: string }) {
   const isOutOfStock = product.stock <= 0;
   const allImages = [product.image_url, ...(product.all_images || [])].filter(Boolean);
 
-  const hasHowToUse = product.how_to_use_title || product.how_to_use_description || product.how_to_use_image;
-  const hasProcess  = product.process_title || product.process_description || product.process_image || product.process_video_url;
-  const hasQuestions = product.questions && product.questions.length > 0;
-  const hasDocs = product.fssai_certificate || product.lab_report;
+  // ── Section visibility flags ──
+  const hasIngredients  = product.ingredients && product.ingredients.length > 0;
+  const hasHowToUse     = product.how_to_use_title || product.how_to_use_description;
+  const hasProcess      = product.process_title || product.process_description || product.process_image || product.process_video_url;
+  const hasExtraInfo    = product.extra_info_title || product.extra_info_description;
+  const hasDocs         = product.fssai_certificate || product.lab_report;
 
   const isProcessVideo = product.process_video_url &&
     (product.process_video_url.endsWith(".mp4") || product.process_video_url.endsWith(".webm"));
+
+  // Dynamic ingredients section title
+  const ingredientsTitle = product.ingredients_title || "Key Ingredients";
 
   return (
     <main className="min-h-screen" style={{ background: "#f2eee9" }}>
@@ -245,10 +252,10 @@ export default function ProductPage({ slug }: { slug: string }) {
 
             {/* Ingredient + FAQ drawer triggers */}
             <div className="pd-info-btns">
-              {product.ingredients && product.ingredients.length > 0 && (
+              {hasIngredients && (
                 <button className="pd-info-btn" onClick={() => setIngDrawerOpen(true)}>
                   <Leaf size={15} />
-                  Key Ingredients
+                  {ingredientsTitle}
                 </button>
               )}
               {product.questions && product.questions.length > 0 && (
@@ -313,19 +320,11 @@ export default function ProductPage({ slug }: { slug: string }) {
             {/* Qty + Add to Cart + Wishlist */}
             <div className="pd-actions-row">
               <div className="pd-qty-control">
-                <button
-                  className="pd-qty-btn"
-                  onClick={() => handleQuantity("dec")}
-                  disabled={quantity <= 1 || isOutOfStock}
-                >
+                <button className="pd-qty-btn" onClick={() => handleQuantity("dec")} disabled={quantity <= 1 || isOutOfStock}>
                   <Minus size={14} />
                 </button>
                 <span className="pd-qty-num">{quantity}</span>
-                <button
-                  className="pd-qty-btn"
-                  onClick={() => handleQuantity("inc")}
-                  disabled={isOutOfStock}
-                >
+                <button className="pd-qty-btn" onClick={() => handleQuantity("inc")} disabled={isOutOfStock}>
                   <Plus size={14} />
                 </button>
               </div>
@@ -383,33 +382,17 @@ export default function ProductPage({ slug }: { slug: string }) {
 
             <div className="pd-thin-divider" />
 
-           {/* ══ FSSAI + Lab Report — above Check Delivery ══ */}
+            {/* FSSAI + Lab Report */}
             {hasDocs && (
               <div className="pd-docs-row">
                 {product.fssai_certificate && (
-                  <Link
-                    href={product.fssai_certificate}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pd-fssai-wrap"
-                  >
-                    <img
-                      src={product.fssai_certificate}
-                      alt="FSSAI Certificate"
-                      className="pd-fssai-img"
-                    />
+                  <Link href={product.fssai_certificate} target="_blank" rel="noopener noreferrer" className="pd-fssai-wrap">
+                    <img src={product.fssai_certificate} alt="FSSAI Certificate" className="pd-fssai-img" />
                   </Link>
                 )}
                 {product.lab_report && (
-                  <Link
-                    href={product.lab_report}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pd-lab-btn"
-                  >
-                    <div className="pd-lab-icon">
-                      <FileText size={20} />
-                    </div>
+                  <Link href={product.lab_report} target="_blank" rel="noopener noreferrer" className="pd-lab-btn">
+                    <div className="pd-lab-icon"><FileText size={20} /></div>
                     <div>
                       <p className="pd-lab-text">Product Laboratory Report</p>
                       <p className="pd-lab-sub">Click to view / download</p>
@@ -431,14 +414,8 @@ export default function ProductPage({ slug }: { slug: string }) {
                   maxLength={10}
                   className="pd-postal-input"
                 />
-                <button
-                  onClick={checkDelivery}
-                  disabled={checkingDelivery}
-                  className="pd-check-btn"
-                >
-                  {checkingDelivery
-                    ? <Loader2 size={14} className="animate-spin" />
-                    : "Check"}
+                <button onClick={checkDelivery} disabled={checkingDelivery} className="pd-check-btn">
+                  {checkingDelivery ? <Loader2 size={14} className="animate-spin" /> : "Check"}
                 </button>
               </div>
               {deliveryInfo && (
@@ -457,60 +434,50 @@ export default function ProductPage({ slug }: { slug: string }) {
           </div>
         </div>
 
-        {/* ══ DESCRIPTION + INGREDIENTS ══ */}
-        <div className="pd-desc-ing-section">
-          <div className="pd-desc-col">
-            <p className="pd-section-eyebrow">About This Product</p>
+        {/* ══ DESCRIPTION + KEY INGREDIENTS ══
+            If no ingredients: description takes full width.
+            If ingredients present: two-column layout with dynamic title. */}
+        <div className={`pd-desc-ing-section ${!hasIngredients ? "pd-desc-ing-section--full" : ""}`}>
+          <div className={hasIngredients ? "pd-desc-col" : "pd-desc-col pd-desc-col--full"}>
             <h2 className="pd-desc-heading">Description</h2>
             <div
               className="pd-description prose"
               dangerouslySetInnerHTML={{ __html: product.description || "<p>No description available.</p>" }}
             />
           </div>
-          <div className="pd-vert-divider" />
-          <div className="pd-ing-col">
-            <p className="pd-section-eyebrow">What's Inside</p>
-            <h2 className="pd-desc-heading">Key Ingredients</h2>
-            {(!product.ingredients || product.ingredients.length === 0) ? (
-              <p style={{ color: "#a89070", fontSize: "14px" }}>No ingredients listed for this product.</p>
-            ) : (
-              <div className="pd-ingredients-list">
-                {product.ingredients.map((ing: any, idx: number) => (
-                  <div key={ing.id || idx}>
-                    <div className="pd-ingredient-row">
-                      {ing.featured_image && (
-                        <div className="pd-ing-img-wrap">
-                          <Image
-                            src={ing.featured_image}
-                            alt={ing.name || "Ingredient"}
-                            fill
-                            className="object-cover rounded-full"
-                          />
+
+          {hasIngredients && (
+            <>
+              <div className="pd-vert-divider" />
+              <div className="pd-ing-col">
+                <h2 className="pd-desc-heading">{ingredientsTitle}</h2>
+                <div className="pd-ingredients-list">
+                  {product.ingredients.map((ing: any, idx: number) => (
+                    <div key={ing.id || idx}>
+                      <div className="pd-ingredient-row pd-ingredient-row--no-img">
+                        <div className="pd-ing-text">
+                          <h4 className="pd-ing-name">{ing.name}</h4>
+                          {ing.content && (
+                            <div
+                              className="pd-ing-desc"
+                              dangerouslySetInnerHTML={{ __html: ing.content }}
+                            />
+                          )}
                         </div>
-                      )}
-                      <div className="pd-ing-text">
-                        <h4 className="pd-ing-name">{ing.name}</h4>
-                        {ing.content && (
-                          <div
-                            className="pd-ing-desc"
-                            dangerouslySetInnerHTML={{ __html: ing.content }}
-                          />
-                        )}
                       </div>
+                      {idx < product.ingredients.length - 1 && <div className="pd-ing-row-divider" />}
                     </div>
-                    {idx < product.ingredients.length - 1 && <div className="pd-ing-row-divider" />}
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
 
-        {/* ══ HOW TO USE ══ */}
+        {/* ══ HOW TO USE ══ — only shown if content exists */}
         {hasHowToUse && (
-          <div className="pd-howto-section">
-            <div className="pd-howto-text-col">
-              <p className="pd-section-eyebrow">Usage Guide</p>
+          <div className={`pd-howto-section ${!product.how_to_use_image ? "pd-howto-section--fullwidth" : ""}`}>
+            <div className={product.how_to_use_image ? "pd-howto-text-col" : "pd-howto-text-col pd-howto-text-col--full"}>
               <h2 className="pd-howto-heading">{product.how_to_use_title || "How To Use"}</h2>
               {product.how_to_use_description && (
                 <div className="pd-howto-steps">
@@ -523,56 +490,47 @@ export default function ProductPage({ slug }: { slug: string }) {
                 </div>
               )}
             </div>
-            <div className="pd-howto-img-col">
-              {product.how_to_use_image ? (
+            {product.how_to_use_image && (
+              <div className="pd-howto-img-col">
                 <div className="pd-howto-img-wrap">
                   <Image src={product.how_to_use_image} alt="How to use" fill className="object-cover" />
                 </div>
-              ) : (
-                <div className="pd-howto-img-wrap pd-howto-img-placeholder">
-                  <div style={{ textAlign: "center", color: "rgba(203,136,54,0.4)" }}>
-                    <Package size={48} />
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* ══ OUR PROCESS ══ */}
+        {/* ══ OUR PROCESS ══ — only shown if content exists */}
         {hasProcess && (
-          <div className="pd-howto-section pd-howto-section--light">
-            <div className="pd-howto-img-col">
-              {isProcessVideo ? (
-                <div className="pd-process-video-wrap" onClick={toggleVideo}>
-                  <video
-                    ref={videoRef}
-                    src={product.process_video_url}
-                    loop
-                    playsInline
-                    className="pd-process-video"
-                    onEnded={() => setVideoPlaying(false)}
-                  />
-                  {!videoPlaying && (
-                    <div className="pd-play-overlay">
-                      <div className="pd-play-btn">
-                        <Play size={28} className="pd-play-icon" />
+          <div className={`pd-howto-section pd-howto-section--light ${!product.process_image && !isProcessVideo ? "pd-howto-section--fullwidth" : ""}`}>
+            {(product.process_image || isProcessVideo) && (
+              <div className="pd-howto-img-col">
+                {isProcessVideo ? (
+                  <div className="pd-process-video-wrap" onClick={toggleVideo}>
+                    <video
+                      ref={videoRef}
+                      src={product.process_video_url}
+                      loop
+                      playsInline
+                      className="pd-process-video"
+                      onEnded={() => setVideoPlaying(false)}
+                    />
+                    {!videoPlaying && (
+                      <div className="pd-play-overlay">
+                        <div className="pd-play-btn">
+                          <Play size={28} className="pd-play-icon" />
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ) : product.process_image ? (
-                <div className="pd-howto-img-wrap">
-                  <Image src={product.process_image} alt="Our Process" fill className="object-cover" />
-                </div>
-              ) : (
-                <div className="pd-howto-img-wrap">
-                  <Image src={product.image_url} alt="Our Process" fill className="object-cover" />
-                </div>
-              )}
-            </div>
-            <div className="pd-howto-text-col pd-howto-text-col--light">
-              <p className="pd-section-eyebrow">Crafted with Care</p>
+                    )}
+                  </div>
+                ) : product.process_image ? (
+                  <div className="pd-howto-img-wrap">
+                    <Image src={product.process_image} alt="Our Process" fill className="object-cover" />
+                  </div>
+                ) : null}
+              </div>
+            )}
+            <div className={`pd-howto-text-col pd-howto-text-col--light ${!product.process_image && !isProcessVideo ? "pd-howto-text-col--full" : ""}`}>
               <h2 className="pd-howto-heading pd-howto-heading--dark">
                 {product.process_title || "Our Process"}
               </h2>
@@ -590,37 +548,29 @@ export default function ProductPage({ slug }: { slug: string }) {
           </div>
         )}
 
-        {/* ══ QUESTIONS / FAQs ══ */}
-        {hasQuestions && (
-          <div className="pd-questions-section">
-            <p className="pd-section-eyebrow">Got Questions?</p>
-            <h2 className="pd-questions-heading">Frequently Asked Questions</h2>
-            <div className="pd-questions-list">
-              {product.questions.map((q: any, idx: number) => (
-                <div key={q.id} className="pd-question-item">
-                  <button
-                    className="pd-question-btn"
-                    onClick={() => setOpenQuestion(openQuestion === idx ? null : idx)}
-                  >
-                    <span>{q.title}</span>
-                    <ChevronDown
-                      size={18}
-                      className="pd-question-chevron"
-                      style={{
-                        transform: openQuestion === idx ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "transform 0.3s",
-                      }}
-                    />
-                  </button>
-                  {openQuestion === idx && q.description && (
+        {/* ══ EXTRA INFO (NEW SECTION) ══ — only shown if content exists */}
+        {hasExtraInfo && (
+          <div className={`pd-howto-section ${!product.extra_info_image ? "pd-howto-section--fullwidth" : ""}`}>
+            <div className={product.extra_info_image ? "pd-howto-text-col" : "pd-howto-text-col pd-howto-text-col--full"}>
+              <h2 className="pd-howto-heading">{product.extra_info_title}</h2>
+              {product.extra_info_description && (
+                <div className="pd-howto-steps">
+                  <div className="pd-howto-step">
                     <div
-                      className="pd-question-answer"
-                      dangerouslySetInnerHTML={{ __html: q.description }}
+                      className="pd-howto-step-text"
+                      dangerouslySetInnerHTML={{ __html: product.extra_info_description }}
                     />
-                  )}
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
+            {product.extra_info_image && (
+              <div className="pd-howto-img-col">
+                <div className="pd-howto-img-wrap">
+                  <Image src={product.extra_info_image} alt={product.extra_info_title || "Extra Info"} fill className="object-cover" />
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -743,11 +693,13 @@ export default function ProductPage({ slug }: { slug: string }) {
         )}
       </div>
 
+      {/* Drawers */}
       <IngredientsDrawer
         isOpen={ingDrawerOpen}
         onClose={() => setIngDrawerOpen(false)}
         ingredients={product.ingredients || []}
         productName={product.name}
+        sectionTitle={ingredientsTitle}
       />
 
       <QuestionsDrawer

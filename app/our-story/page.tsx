@@ -41,9 +41,9 @@ export default function AboutUs() {
             Our Story
           </p>
           <h1 className="text-4xl md:text-6xl font-bold mb-3" style={{ fontFamily: "'Libre Baskerville', serif" }}>
-            POSYA
+            PŌSYA
           </h1>
-          <p className="text-lg text-white/80">Petal-born wellness, timeless glow.</p>
+          <p className="text-lg text-white/80">The Alchemy of Floral Nutrition.</p>
         </div>
       </section>
 
@@ -51,13 +51,10 @@ export default function AboutUs() {
       <section style={{ background: "#f7f3ee" }} className="py-28">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
           <div>
-            <p className="about-eyebrow">Brand Essence</p>
+            <p className="about-eyebrow">THE BRAND ESSENCE</p>
             <h2 className="about-section-heading">The Bloom to Bee to Bottle Journey</h2>
             <p className="about-body">
-              Posya curates floral nutrition, drawing inspiration from the quiet intelligence of nature:
-              a bee sipping nectar, pollinating blossoms, and helping transform floral essence into honey
-              and other nutrient-rich expressions of the flower. This celestial continuum —
-              "bloom to bee to bottle" — shapes how Posya fuses with the tune of natural nutrition.
+              PŌSYA is an exploration of high-altitude floral nutrition, drawing inspiration from the quiet intelligence of nature. We observe the delicate alchemy of the wild: a native bee drawing nectar, the meticulous pollination of a mountain blossom, and the transformation of a flower's life-force into nutrient-dense elixirs. This celestial continuum—from bloom, to bee, to bottle—is the exact rhythm that defines our craft.
             </p>
           </div>
           <div className="about-img-wrap">
@@ -73,13 +70,14 @@ export default function AboutUs() {
             <img src="/images/herbalfloral.webp" className="w-full h-full object-cover" alt="Floral Nutrition" />
           </div>
           <div>
-            <p className="about-eyebrow">Floral Nutrition Philosophy</p>
+            <p className="about-eyebrow">OUR FLORAL NUTRITION PHILOSOPHY</p>
             <h2 className="about-section-heading">Flowers Are More Than Fragrance</h2>
             <div className="space-y-5 about-body">
-              <p>At the heart of Posya is a belief that flowers are delicate nutritional ecosystems. POSYA aligns itself with nature to ENVISION, NOURISH and PRODUCE.</p>
-              <p>Honeybees pollinate and harvest liquid gold from flora, traversing pristine landscapes — delivering you pure, nutrient-rich hydration drawn from nature's living ecosystem.</p>
-              <p>Hydrosols, meticulously distilled from bee-kissed petals and herbs, preserve water-soluble phytonutrients and delicate aromatic essences.</p>
-              <p>Ghee, crafted from the milk of cows grazing lush Himalayan pastures, imparts a timeless, fat-rich depth of unparalleled decadence.</p>
+              <p>At the heart of PŌSYA is a singular, uncompromising belief: flowers are not merely for fragrance; they are complex, living nutritional ecosystems. We align with the natural world to envision, nourish, and produce, capturing the delicate dance of life through two primary expressions:</p>
+              <ul>
+                <li><b>The Nectar:</b> Native honeybees traverse pristine, untouched landscapes to harvest liquid gold from wild flora. This ancient collaboration delivers pure, bioactive nourishment drawn directly from the mountain's vibrant ecosystem.</li>
+                <li><b>The Water:</b> Meticulously steam-distilled from bee-kissed petals and resilient herbs, our hydrosols capture the "heart water" of the plant. This slow, artisanal extraction preserves the water-soluble phytonutrients, volatile compounds, and the absolute life-force of the bloom.</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -89,11 +87,11 @@ export default function AboutUs() {
       <section style={{ background: "#fcf9f2" }} className="py-28">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
           <div>
-            <p className="about-eyebrow">From Flower to You</p>
+            <p className="about-eyebrow">FROM FLOWER TO YOU</p>
             <h2 className="about-section-heading">Nature's Alchemy, Bottled</h2>
             <div className="space-y-5 about-body">
-              <p>By honouring each step — flower, bee, grazing, pollination, extraction — Posya offers nutrition products that feel alive, nuanced and naturally balanced.</p>
-              <p>Each bottle of POSYA is crafted with bare minimum human intervention to translate the quiet work of nature's alchemy into natural everyday nourishment.</p>
+              <p>By honoring every microscopic step—the wild flower, the foraging bee, the careful pollination, and the slow extraction—PŌSYA creates profound botanical products that are alive, nuanced, and naturally balanced.</p>
+              <p>Crafted with absolute purity and the bare minimum of human intervention, every bottle translates the quiet work of nature into everyday cellular nourishment. It is an invitation to unite absolute sensory pleasure with profound, subtle floral wellness.</p>
             </div>
           </div>
           <div className="about-img-wrap">
