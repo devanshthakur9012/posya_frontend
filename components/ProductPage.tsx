@@ -454,12 +454,27 @@ export default function ProductPage({ slug }: { slug: string }) {
                 <div className="pd-ingredients-list">
                   {product.ingredients.map((ing: any, idx: number) => (
                     <div key={ing.id || idx}>
-                      <div className="pd-ingredient-row pd-ingredient-row--no-img">
-                        <div className="pd-ing-text">
-                          <h4 className="pd-ing-name">{ing.name}</h4>
+                      <div className="pd-ingredient-row" style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                        {ing.featured_image && (
+                          <div style={{ position: "relative", width: 48, height: 48, flexShrink: 0, borderRadius: "50%", overflow: "hidden" }}>
+                            <Image src={ing.featured_image} alt={ing.name || "Ingredient"} fill className="object-cover" />
+                          </div>
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <h4 style={{
+                            fontSize: "13px",
+                            fontWeight: 700,
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            color: "#2b1a06",
+                            margin: "0 0 6px 0",
+                            wordBreak: "break-word",
+                          }}>
+                            {ing.name}
+                          </h4>
                           {ing.content && (
                             <div
-                              className="pd-ing-desc"
+                              style={{ fontSize: "13px", lineHeight: "1.6", color: "#6b5540", wordBreak: "break-word", overflowWrap: "break-word" }}
                               dangerouslySetInnerHTML={{ __html: ing.content }}
                             />
                           )}
@@ -699,7 +714,6 @@ export default function ProductPage({ slug }: { slug: string }) {
         onClose={() => setIngDrawerOpen(false)}
         ingredients={product.ingredients || []}
         productName={product.name}
-        sectionTitle={ingredientsTitle}
       />
 
       <QuestionsDrawer
