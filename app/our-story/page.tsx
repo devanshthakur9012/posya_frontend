@@ -54,7 +54,7 @@ export default function AboutUs() {
             <p className="about-eyebrow">THE BRAND ESSENCE</p>
             <h2 className="about-section-heading">The Bloom to Bee to Bottle Journey</h2>
             <p className="about-body">
-              PŌSYA is an exploration of high-altitude floral nutrition, drawing inspiration from the quiet intelligence of nature. We observe the delicate alchemy of the wild: a native bee drawing nectar, the meticulous pollination of a mountain blossom, and the transformation of a flower's life-force into nutrient-dense elixirs. This celestial continuum—from bloom, to bee, to bottle—is the exact rhythm that defines our craft.
+               PŌSYA is an exploration of high-altitude floral nutrition, drawing inspiration from the quiet intelligence of nature. We observe the delicate alchemy of the wild: the deep roots that anchor the flora, a native bee drawing nectar, the meticulous pollination of a mountain blossom, and the transformation of a flower's life-force into nutrient-dense elixirs. This celestial continuum—from root, to bloom, to bee, to pasture, to bottle—is the exact rhythm that defines our craft.
             </p>
           </div>
           <div className="about-img-wrap">
@@ -73,10 +73,12 @@ export default function AboutUs() {
             <p className="about-eyebrow">OUR FLORAL NUTRITION PHILOSOPHY</p>
             <h2 className="about-section-heading">Flowers Are More Than Fragrance</h2>
             <div className="space-y-5 about-body">
-              <p>At the heart of PŌSYA is a singular, uncompromising belief: flowers are not merely for fragrance; they are complex, living nutritional ecosystems. We align with the natural world to envision, nourish, and produce, capturing the delicate dance of life through two primary expressions:</p>
+              <p>At the heart of PŌSYA is a singular, uncompromising belief: flowers are not merely for fragrance; they are the genesis of complex, living nutritional ecosystems. We align with the natural world to envision, nourish, and produce, capturing the delicate dance of the high Himalayas through nature's primary expressions:</p>
               <ul>
                 <li><b>The Nectar:</b> Native honeybees traverse pristine, untouched landscapes to harvest liquid gold from wild flora. This ancient collaboration delivers pure, bioactive nourishment drawn directly from the mountain's vibrant ecosystem.</li>
                 <li><b>The Water:</b> Meticulously steam-distilled from bee-kissed petals and resilient herbs, our hydrosols capture the "heart water" of the plant. This slow, artisanal extraction preserves the water-soluble phytonutrients, volatile compounds, and the absolute life-force of the bloom.</li>
+                <li><b>The Harvest:</b> Honoring the complete lifecycle of the flora, we look to the resilient roots, wild herbs, and mature fruits that sustain the mountain. These elemental botanicals are preserved in their most potent, uncorrupted forms to offer foundational, earth-born nutrition.</li>
+                <li><b>The Pasture:</b> In the Chamoli region of Uttarakhand, native cattle graze freely on wild, bloom-fed alpine meadows. Guided by the ancient Vedic Bilona method, this floral-infused milk is transformed into a golden, nutrient-dense elixir. It provides the profound, fat-soluble sustenance that has powered Himalayan villages through bitter winters for centuries, perfectly grounding our botanical harvests.</li>
               </ul>
             </div>
           </div>
@@ -90,8 +92,8 @@ export default function AboutUs() {
             <p className="about-eyebrow">FROM FLOWER TO YOU</p>
             <h2 className="about-section-heading">Nature's Alchemy, Bottled</h2>
             <div className="space-y-5 about-body">
-              <p>By honoring every microscopic step—the wild flower, the foraging bee, the careful pollination, and the slow extraction—PŌSYA creates profound botanical products that are alive, nuanced, and naturally balanced.</p>
-              <p>Crafted with absolute purity and the bare minimum of human intervention, every bottle translates the quiet work of nature into everyday cellular nourishment. It is an invitation to unite absolute sensory pleasure with profound, subtle floral wellness.</p>
+              <p>By honoring every microscopic step—the untamed root, the wild flower, the foraging bee, the grazing cattle, and the slow extraction—PŌSYA creates profound botanical products that are alive, nuanced, and naturally balanced.</p>
+              <p>Crafted with absolute purity and the bare minimum of human intervention, every bottle and jar translates the quiet work of nature into everyday cellular nourishment. It is an invitation to unite absolute sensory pleasure with profound, subtle floral wellness.</p>
             </div>
           </div>
           <div className="about-img-wrap">

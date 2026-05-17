@@ -5046,13 +5046,17 @@ li{
 @media (max-width: 640px) { .pd-howto-text-col { padding: 36px 28px; } }
 
 .pd-howto-text-col .pd-section-eyebrow { color: #cb8836; }
-.pd-howto-heading { font-family: 'Libre Baskerville', serif; font-size: clamp(26px, 4vw, 40px); font-weight: 700; color: #f2eee9; margin-bottom: 32px; }
+.pd-howto-heading { font-family: 'Libre Baskerville', serif; font-size: clamp(26px, 4vw, 30px); font-weight: 700; color: #f2eee9; margin-bottom: 32px; }
 
 .pd-howto-steps { display: flex; flex-direction: column; }
 .pd-howto-step { padding: 20px 0; }
 .pd-howto-step-label { font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #cb8836; margin-bottom: 8px; }
-.pd-howto-step-text { font-size: 15px; color: #c4b49a; line-height: 1.75; }
+.pd-howto-step-text { font-size: 15px; color: #fff; line-height: 1.75; }
 .pd-howto-divider { height: 1px; background: rgba(203,136,54,0.15); }
+
+.pd-howto-step-text li{
+  margin-bottom: 4px !important;
+}
 
 .pd-howto-img-col { position: relative; min-height: 400px; }
 .pd-howto-img-wrap { position: absolute; inset: 0; }

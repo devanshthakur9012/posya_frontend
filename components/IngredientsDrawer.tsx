@@ -9,9 +9,16 @@ interface IngredientsDrawerProps {
   onClose: () => void;
   ingredients: any[];
   productName: string;
+  sectionTitle?: string;
 }
 
-export default function IngredientsDrawer({ isOpen, onClose, ingredients, productName }: IngredientsDrawerProps) {
+export default function IngredientsDrawer({
+  isOpen,
+  onClose,
+  ingredients,
+  productName,
+  sectionTitle = "Key Ingredients",
+}: IngredientsDrawerProps) {
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
     return () => { document.body.style.overflow = "auto"; };
@@ -24,15 +31,14 @@ export default function IngredientsDrawer({ isOpen, onClose, ingredients, produc
       <div onClick={onClose} className="pdrawer-overlay" />
       <div className="pdrawer">
 
-        {/* Header */}
+        {/* Header — no subtitle */}
         <div className="pdrawer-header">
           <div className="pdrawer-header-left">
             <div className="pdrawer-header-icon" style={{ background: "rgba(203,136,54,0.1)" }}>
               <Leaf size={18} style={{ color: "#cb8836" }} />
             </div>
             <div>
-              <h2 className="pdrawer-title">Key Ingredients</h2>
-              <p className="pdrawer-subtitle">{productName}</p>
+              <h2 className="pdrawer-title">{sectionTitle}</h2>
             </div>
           </div>
           <button onClick={onClose} className="pdrawer-close-btn"><X size={18} /></button>
@@ -47,23 +53,76 @@ export default function IngredientsDrawer({ isOpen, onClose, ingredients, produc
               <p className="pdrawer-empty-sub">This product has no ingredients added yet.</p>
             </div>
           ) : (
-            <div className="pdrawer-ing-list">
+            <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
               {ingredients.map((ing: any, idx: number) => (
                 <div key={ing.id || idx}>
-                  <div className="pdrawer-ing-row">
+                  <div style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "14px",
+                    alignItems: "flex-start",
+                    width: "100%",
+                  }}>
+                    {/* Image — only if present */}
                     {ing.featured_image && (
-                      <div className="pdrawer-ing-img">
+                      <div style={{
+                        position: "relative",
+                        width: 52,
+                        height: 52,
+                        flexShrink: 0,
+                        borderRadius: "50%",
+                        overflow: "hidden",
+                      }}>
                         <Image src={ing.featured_image} alt={ing.name || "Ingredient"} fill className="object-cover" />
                       </div>
                     )}
-                    <div className="pdrawer-ing-text">
-                      <h4 className="pdrawer-ing-name">{ing.name}</h4>
+                    {/* Text — takes full width when no image */}
+                    <div style={{
+                      flex: 1,
+                      minWidth: 0,
+                      width: "100%",
+                      overflow: "hidden",
+                    }}>
+                      <p style={{
+                        fontSize: "12px",
+                        fontWeight: 700,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        color: "#2b1a06",
+                        margin: "0 0 10px 0",
+                        lineHeight: "1.6",
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        overflowWrap: "anywhere",
+                        display: "block",
+                        width: "100%",
+                      }}>
+                        {ing.name}
+                      </p>
                       {ing.content && (
-                        <div className="pdrawer-ing-desc" dangerouslySetInnerHTML={{ __html: ing.content }} />
+                        <div
+                          style={{
+                            fontSize: "14px",
+                            lineHeight: "1.9",
+                            color: "#5a4030",
+                            whiteSpace: "normal",
+                            wordBreak: "break-word",
+                            overflowWrap: "anywhere",
+                            width: "100%",
+                            display: "block",
+                          }}
+                          dangerouslySetInnerHTML={{ __html: ing.content }}
+                        />
                       )}
                     </div>
                   </div>
-                  {idx < ingredients.length - 1 && <div className="pdrawer-divider" />}
+                  {idx < ingredients.length - 1 && (
+                    <div style={{
+                      height: "1px",
+                      background: "rgba(203,136,54,0.15)",
+                      margin: "20px 0",
+                    }} />
+                  )}
                 </div>
               ))}
             </div>

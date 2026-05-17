@@ -6,23 +6,23 @@ import { Leaf, Flower2, Sparkles, TreePine } from "lucide-react";
 const pillars = [
   {
     icon: <Flower2 className="w-5 h-5" />,
-    title: "Floral Nutrition",
-    description: "Purest floral essences woven into nourishing elixirs",
+    title: "The Nectar",
+    description: "Ancient bee wisdom gathering bioactive nourishment from untouched wild flora.",
   },
   {
     icon: <Leaf className="w-5 h-5" />,
-    title: "Nature's Wisdom",
-    description: "Inspired by the gentle hum of bees & dance of petals",
+    title: "The Water",
+    description: "Artisanal heart-water preserving phytonutrients and the life-force of every bloom.",
   },
   {
     icon: <Sparkles className="w-5 h-5" />,
-    title: "Triveni Heritage",
-    description: "Rooted in the sacred trio of Peepal, Banyan & Neem",
+    title: "The Harvest",
+    description: "Earth-born botanicals preserving the mountain’s most potent natural nutrition.",
   },
   {
     icon: <TreePine className="w-5 h-5" />,
-    title: "Interconnectedness",
-    description: "Well-being woven into the very fabric of nature",
+    title: "The Pasture",
+    description: "Ancient Bilona wisdom transforming alpine floral milk into golden nourishment.",
   },
 ];
 
@@ -93,8 +93,8 @@ export default function PosyaPhilosophy() {
               viewport={{ once: true }}
               className="posya-phil-heading"
             >
-              Nature's Wisdom,<br />
-              <span className="posya-phil-heading--accent">Rooted in Flowers</span>
+              Our Floral,<br />
+              <span className="posya-phil-heading--accent">Nutrition Philosophy</span>
             </motion.h2>
 
             <motion.p
@@ -104,11 +104,7 @@ export default function PosyaPhilosophy() {
               viewport={{ once: true }}
               className="posya-phil-body"
             >
-              Our floral nutrition philosophy is rooted in the belief that
-              flowers are more than fragrance — they are delicate nutritional
-              ecosystems that hold the power to transform and uplift. With every
-              bloom, we honour the intricate ecosystems of nature and the quiet
-              strength of the flowers that sustain us.
+              At the heart of PŌSYA is a singular, uncompromising belief: flowers are not merely for fragrance; they are the genesis of complex, living nutritional ecosystems. We align with the natural world to envision, nourish, and produce, capturing the delicate dance of the high Himalayas through nature's primary expressions:
             </motion.p>
 
             {/* Pillars grid */}

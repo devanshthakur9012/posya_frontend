@@ -434,14 +434,19 @@ export default function ProductPage({ slug }: { slug: string }) {
           </div>
         </div>
 
-        {/* ══ DESCRIPTION + KEY INGREDIENTS ══
-            If no ingredients: description takes full width.
-            If ingredients present: two-column layout with dynamic title. */}
-        <div className={`pd-desc-ing-section ${!hasIngredients ? "pd-desc-ing-section--full" : ""}`}>
-          <div className={hasIngredients ? "pd-desc-col" : "pd-desc-col pd-desc-col--full"}>
+        {/* ══ DESCRIPTION + KEY INGREDIENTS ══ */}
+        <div
+          className="pd-desc-ing-section"
+          style={!hasIngredients ? { display: "block" } : {}}
+        >
+          <div
+            className="pd-desc-col"
+            style={!hasIngredients ? { width: "100%", maxWidth: "100%" } : {}}
+          >
             <h2 className="pd-desc-heading">Description</h2>
             <div
               className="pd-description prose"
+              style={{ lineHeight: "1.9" }}
               dangerouslySetInnerHTML={{ __html: product.description || "<p>No description available.</p>" }}
             />
           </div>
@@ -454,33 +459,57 @@ export default function ProductPage({ slug }: { slug: string }) {
                 <div className="pd-ingredients-list">
                   {product.ingredients.map((ing: any, idx: number) => (
                     <div key={ing.id || idx}>
-                      <div className="pd-ingredient-row" style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                      <div style={{
+                        display: "flex",
+                        gap: "14px",
+                        alignItems: "flex-start",
+                        padding: "4px 0",
+                      }}>
                         {ing.featured_image && (
-                          <div style={{ position: "relative", width: 48, height: 48, flexShrink: 0, borderRadius: "50%", overflow: "hidden" }}>
+                          <div style={{
+                            position: "relative",
+                            width: 44,
+                            height: 44,
+                            flexShrink: 0,
+                            borderRadius: "50%",
+                            overflow: "hidden",
+                          }}>
                             <Image src={ing.featured_image} alt={ing.name || "Ingredient"} fill className="object-cover" />
                           </div>
                         )}
-                        <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ flex: 1, minWidth: 0, width: "100%" }}>
                           <h4 style={{
-                            fontSize: "13px",
+                            fontSize: "12px",
                             fontWeight: 700,
-                            letterSpacing: "0.08em",
+                            letterSpacing: "0.06em",
                             textTransform: "uppercase",
                             color: "#2b1a06",
-                            margin: "0 0 6px 0",
-                            wordBreak: "break-word",
+                            margin: "0 0 8px 0",
+                            lineHeight: "1.5",
+                            whiteSpace: "normal",
+                            overflowWrap: "break-word",
+                            wordBreak: "normal",
                           }}>
                             {ing.name}
                           </h4>
                           {ing.content && (
                             <div
-                              style={{ fontSize: "13px", lineHeight: "1.6", color: "#6b5540", wordBreak: "break-word", overflowWrap: "break-word" }}
+                              style={{
+                                fontSize: "13px",
+                                lineHeight: "1.85",
+                                color: "#6b5540",
+                                overflowWrap: "break-word",
+                                wordBreak: "normal",
+                                whiteSpace: "normal",
+                              }}
                               dangerouslySetInnerHTML={{ __html: ing.content }}
                             />
                           )}
                         </div>
                       </div>
-                      {idx < product.ingredients.length - 1 && <div className="pd-ing-row-divider" />}
+                      {idx < product.ingredients.length - 1 && (
+                        <div className="pd-ing-row-divider" style={{ margin: "12px 0" }} />
+                      )}
                     </div>
                   ))}
                 </div>
@@ -489,20 +518,27 @@ export default function ProductPage({ slug }: { slug: string }) {
           )}
         </div>
 
-        {/* ══ HOW TO USE ══ — only shown if content exists */}
+        {/* ══ HOW TO USE ══ */}
         {hasHowToUse && (
-          <div className={`pd-howto-section ${!product.how_to_use_image ? "pd-howto-section--fullwidth" : ""}`}>
-            <div className={product.how_to_use_image ? "pd-howto-text-col" : "pd-howto-text-col pd-howto-text-col--full"}>
-              <h2 className="pd-howto-heading">{product.how_to_use_title || "How To Use"}</h2>
+          <div
+            className="pd-howto-section"
+            style={!product.how_to_use_image
+              ? { display: "block", minHeight: "unset" }
+              : { minHeight: "unset" }}
+          >
+            <div
+              className="pd-howto-text-col"
+              style={{ padding: "36px 44px", justifyContent: "flex-start" }}
+            >
+              <h2 className="pd-howto-heading" style={{ marginBottom: "16px" }}>
+                {product.how_to_use_title || "How To Use"}
+              </h2>
               {product.how_to_use_description && (
-                <div className="pd-howto-steps">
-                  <div className="pd-howto-step">
-                    <div
-                      className="pd-howto-step-text"
-                      dangerouslySetInnerHTML={{ __html: product.how_to_use_description }}
-                    />
-                  </div>
-                </div>
+                <div
+                  className="pd-howto-step-text"
+                  style={{ lineHeight: "1.85" }}
+                  dangerouslySetInnerHTML={{ __html: product.how_to_use_description }}
+                />
               )}
             </div>
             {product.how_to_use_image && (
@@ -515,9 +551,14 @@ export default function ProductPage({ slug }: { slug: string }) {
           </div>
         )}
 
-        {/* ══ OUR PROCESS ══ — only shown if content exists */}
+        {/* ══ OUR PROCESS ══ */}
         {hasProcess && (
-          <div className={`pd-howto-section pd-howto-section--light ${!product.process_image && !isProcessVideo ? "pd-howto-section--fullwidth" : ""}`}>
+          <div
+            className="pd-howto-section pd-howto-section--light"
+            style={!product.process_image && !isProcessVideo
+              ? { display: "block", minHeight: "unset" }
+              : { minHeight: "unset" }}
+          >
             {(product.process_image || isProcessVideo) && (
               <div className="pd-howto-img-col">
                 {isProcessVideo ? (
@@ -545,38 +586,45 @@ export default function ProductPage({ slug }: { slug: string }) {
                 ) : null}
               </div>
             )}
-            <div className={`pd-howto-text-col pd-howto-text-col--light ${!product.process_image && !isProcessVideo ? "pd-howto-text-col--full" : ""}`}>
-              <h2 className="pd-howto-heading pd-howto-heading--dark">
+            <div
+              className="pd-howto-text-col pd-howto-text-col--light"
+              style={{ padding: "36px 44px", justifyContent: "flex-start" }}
+            >
+              <h2 className="pd-howto-heading pd-howto-heading--dark" style={{ marginBottom: "16px" }}>
                 {product.process_title || "Our Process"}
               </h2>
               {product.process_description && (
-                <div className="pd-howto-steps">
-                  <div className="pd-howto-step">
-                    <div
-                      className="pd-howto-step-text pd-howto-step-text--dark"
-                      dangerouslySetInnerHTML={{ __html: product.process_description }}
-                    />
-                  </div>
-                </div>
+                <div
+                  className="pd-howto-step-text pd-howto-step-text--dark"
+                  style={{ lineHeight: "1.85" }}
+                  dangerouslySetInnerHTML={{ __html: product.process_description }}
+                />
               )}
             </div>
           </div>
         )}
 
-        {/* ══ EXTRA INFO (NEW SECTION) ══ — only shown if content exists */}
+        {/* ══ EXTRA INFO ══ */}
         {hasExtraInfo && (
-          <div className={`pd-howto-section ${!product.extra_info_image ? "pd-howto-section--fullwidth" : ""}`}>
-            <div className={product.extra_info_image ? "pd-howto-text-col" : "pd-howto-text-col pd-howto-text-col--full"}>
-              <h2 className="pd-howto-heading">{product.extra_info_title}</h2>
+          <div
+            className="pd-howto-section"
+            style={!product.extra_info_image
+              ? { display: "block", minHeight: "unset" }
+              : { minHeight: "unset" }}
+          >
+            <div
+              className="pd-howto-text-col"
+              style={{ padding: "36px 44px", justifyContent: "flex-start" }}
+            >
+              <h2 className="pd-howto-heading" style={{ marginBottom: "16px" }}>
+                {product.extra_info_title}
+              </h2>
               {product.extra_info_description && (
-                <div className="pd-howto-steps">
-                  <div className="pd-howto-step">
-                    <div
-                      className="pd-howto-step-text"
-                      dangerouslySetInnerHTML={{ __html: product.extra_info_description }}
-                    />
-                  </div>
-                </div>
+                <div
+                  className="pd-howto-step-text"
+                  style={{ lineHeight: "1.85" }}
+                  dangerouslySetInnerHTML={{ __html: product.extra_info_description }}
+                />
               )}
             </div>
             {product.extra_info_image && (
@@ -714,6 +762,7 @@ export default function ProductPage({ slug }: { slug: string }) {
         onClose={() => setIngDrawerOpen(false)}
         ingredients={product.ingredients || []}
         productName={product.name}
+        sectionTitle={ingredientsTitle}
       />
 
       <QuestionsDrawer
