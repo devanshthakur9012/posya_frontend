@@ -14,7 +14,7 @@ const sections = [
     icon: <Truck size={18} />,
     title: "2. Shipping",
     content:
-      "We dispatch orders through reliable couriers. Delivery timelines depend on your location and courier availability. Typically orders are delivered within 5–7 business days. Posya is not responsible for delays caused by courier partners or unforeseen circumstances.",
+      "We dispatch orders through reliable couriers. Delivery timelines depend on your location and courier availability. Ready products are dispatched within 2–3 working days; freshly prepared products within 7–10 working days. POSYA is not responsible for delays caused by courier partners or unforeseen circumstances.",
   },
   {
     icon: <CreditCard size={18} />,
@@ -117,7 +117,7 @@ export default function TermsConditionsPage() {
           <p className="faq-cta-sub">
             Our team is happy to clarify anything for you.
           </p>
-          <a href="mailto:help@posya.in" className="faq-cta-btn">
+          <a href="mailto:posyaorganics@gmail.com" className="faq-cta-btn">
             Contact Us
           </a>
         </div>

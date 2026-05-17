@@ -50,7 +50,7 @@ const sections = [
       "Access or review your personal data at any time",
       "Request correction of inaccurate information",
       "Request deletion of your account and associated data",
-      "Contact us at help@posya.in for any privacy-related inquiries",
+      "Contact us at posyaorganics@gmail.com for any privacy-related inquiries",
     ],
     hasEmail: true,
   },
@@ -129,11 +129,11 @@ export default function PrivacyPolicyPage() {
                     <ul className="pp-list">
                       {sec.list.map((item, j) => (
                         <li key={j}>
-                          {sec.hasEmail && item.includes("help@posya.in") ? (
+                          {sec.hasEmail && item.includes("posyaorganics@gmail.com") ? (
                             <>
                               Contact us at{" "}
-                              <a href="mailto:help@posya.in" className="faq-link">
-                                help@posya.in
+                              <a href="mailto:posyaorganics@gmail.com" className="faq-link">
+                                posyaorganics@gmail.com
                               </a>{" "}
                               for any privacy-related inquiries
                             </>
@@ -156,7 +156,7 @@ export default function PrivacyPolicyPage() {
           <p className="faq-cta-sub">
             Reach out to us and we'll respond within 24 hours.
           </p>
-          <a href="mailto:help@posya.in" className="faq-cta-btn">
+          <a href="mailto:posyaorganics@gmail.com" className="faq-cta-btn">
             Email Us
           </a>
         </div>
