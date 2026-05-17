@@ -30,7 +30,7 @@ export default function OrganicSection() {
       {canLoadVideo && (
         <video
           ref={videoRef}
-          src="/images/honeymaking.mp4"
+          src="/images/home-video.mp4"
           muted
           loop
           playsInline
