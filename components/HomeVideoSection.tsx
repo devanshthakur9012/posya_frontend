@@ -1,11 +1,9 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
-import { Play, Pause } from "lucide-react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function OrganicSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [canLoadVideo, setCanLoadVideo] = useState(false);
 
   useEffect(() => {
@@ -13,16 +11,11 @@ export default function OrganicSection() {
     return () => clearTimeout(t);
   }, []);
 
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-      setIsPlaying(true);
-    } else {
-      videoRef.current.pause();
-      setIsPlaying(false);
+  useEffect(() => {
+    if (canLoadVideo && videoRef.current) {
+      videoRef.current.play().catch(() => {});
     }
-  };
+  }, [canLoadVideo]);
 
   return (
     <section className="relative w-full h-[550px] md:h-[650px] overflow-hidden">
@@ -34,15 +27,16 @@ export default function OrganicSection() {
           muted
           loop
           playsInline
+          autoPlay
           preload="metadata"
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
 
       {/* Overlay */}
-      <div className={`absolute inset-0 transition duration-500 ${isPlaying ? "bg-black/30" : "bg-black/60"}`} />
+      <div className="absolute inset-0 bg-black/40" />
 
-      {/* All content centered */}
+      {/* Content centered */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
         <h2 className="text-2xl md:text-4xl font-serif font-semibold mb-3">
           We Produce Organically
@@ -54,18 +48,6 @@ export default function OrganicSection() {
         <Link href="/shop" prefetch={false} className="explore-btn btn mb-8 md:w-50">
           Start Shopping Now..
         </Link>
-
-        {/* Play button BELOW the text */}
-        <button
-          onClick={togglePlay}
-          className="bg-white/80 p-4 rounded-full hover:bg-white transition"
-        >
-          {isPlaying ? (
-            <Pause size={22} className="text-black" />
-          ) : (
-            <Play size={22} className="text-black" />
-          )}
-        </button>
       </div>
 
     </section>
