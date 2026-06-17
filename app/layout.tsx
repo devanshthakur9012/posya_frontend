@@ -31,9 +31,9 @@ export default function RootLayout({
         <GlobalProgress />
         <CartProvider>
           <WishlistProvider>
-        <Header />
+        {/* <Header /> */}
         {children}
-         <Footer />
+         {/* <Footer /> */}
          <Toaster position="top-right" />
          </WishlistProvider>
       </CartProvider>
