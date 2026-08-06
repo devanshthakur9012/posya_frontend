@@ -205,7 +205,7 @@ p, a, h1, h2, h3, h4, h5,h6, span, li{
 
 
 .topHeading h2{
-    color: #cb8836;
+    color: #2b1a06;
     /* font-family: Ubuntu, sans-serif !important; */
     font-size: 36px;
     font-weight: 900;
@@ -6568,8 +6568,8 @@ li{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #cb8836;
-  color: #fff;
+  background: #9e8054;
+  color: #2b1a06;
   border: none;
   border-radius: 50px;
   padding: 11px 22px;
@@ -6578,6 +6578,8 @@ li{
   letter-spacing: .3px;
   cursor: pointer;
   transition: background .25s, transform .25s, color .25s;
+  font-family: sans-serif;
+
 }
 .cat2-card-btn:hover { background: #f2eee9; color: #2b1a06; transform: translateY(-2px); }
 .cat2-card-btn svg { transition: transform .25s; }

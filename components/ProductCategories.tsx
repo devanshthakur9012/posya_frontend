@@ -33,7 +33,7 @@ export default function ProductCategories() {
     return (
       <section className="cat2-section">
         <div className="cat2-container">
-          <TopHeading heading="Shop By Ritual" />
+          <TopHeading heading="Discover Our Essentials" />
           <div className="cat2-grid">
             {Array.from({ length: 3 }).map((_, i) => (
               <div
@@ -52,7 +52,7 @@ export default function ProductCategories() {
     return (
       <section className="cat2-section">
         <div className="cat2-container">
-          <TopHeading heading="Shop By Ritual" />
+          <TopHeading heading="Discover Our Essentials" />
           <p className="cat2-empty">No categories found</p>
         </div>
       </section>
@@ -65,7 +65,7 @@ export default function ProductCategories() {
   return (
     <section className="cat2-section">
       <div className="cat2-container">
-        <TopHeading heading="Shop By Ritual" />
+        <TopHeading heading="Discover Our Essentials" />
 
         <div className="cat2-grid">
           {visible.map((cat, i) => (
