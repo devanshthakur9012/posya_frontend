@@ -1,22 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import TopHeading from "./TopHeading";
-import SectionLoader from "./SectionLoader";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const AUTOSCROLL_INTERVAL = 3000; // ms between auto-advances
+const MAX_VISIBLE = 5;
 
 export default function ProductCategories() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(1);
-  const [isPaused, setIsPaused] = useState(false);
   const router = useRouter();
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     fetch(`${BASE_URL}categories`)
@@ -28,141 +24,121 @@ export default function ProductCategories() {
       .finally(() => setLoading(false));
   }, []);
 
-  const next = useCallback(
-    () => setActiveIndex((i) => (i + 1) % categories.length),
-    [categories.length]
-  );
-
-  const prev = useCallback(
-    () => setActiveIndex((i) => (i - 1 + categories.length) % categories.length),
-    [categories.length]
-  );
-
-  // Autoscroll: starts when categories load, pauses on hover/interaction
-  useEffect(() => {
-    if (categories.length === 0) return;
-
-    if (!isPaused) {
-      intervalRef.current = setInterval(next, AUTOSCROLL_INTERVAL);
+  const goToShop = (categoryName?: string) => {
+    if (categoryName) {
+      router.push(`/shop?category=${encodeURIComponent(categoryName)}`);
+    } else {
+      router.push(`/shop`);
     }
+  };
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [categories.length, isPaused, next]);
-
-  // Pause autoscroll temporarily after manual navigation, then resume
-  const manualNav = useCallback((action: () => void) => {
-    action();
-    setIsPaused(true);
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    const resumeTimeout = setTimeout(() => setIsPaused(false), 5000);
-    return () => clearTimeout(resumeTimeout);
-  }, []);
-
-  if (loading) return <SectionLoader count={3} shape="circle" />;
-
-  if (categories.length === 0) {
+  if (loading) {
     return (
-      <p className="text-center py-8 text-gray-500 text-lg">No categories found</p>
+      <section className="cat2-section">
+        <div className="cat2-container">
+          <TopHeading heading="Shop By Ritual" />
+          <div className="cat2-grid">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className={`cat2-card cat2-skeleton shimmer ${i === 0 ? "cat2-card--hero" : ""}`}
+                style={{ animation: "none", opacity: 1 }}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
     );
   }
 
-  const goToShop = (categoryName: string) => {
-    router.push(`/shop?category=${encodeURIComponent(categoryName)}`);
-  };
+  if (categories.length === 0) {
+    return (
+      <section className="cat2-section">
+        <div className="cat2-container">
+          <TopHeading heading="Shop By Ritual" />
+          <p className="cat2-empty">No categories found</p>
+        </div>
+      </section>
+    );
+  }
 
-  const leftIdx = (activeIndex - 1 + categories.length) % categories.length;
-  const centerIdx = activeIndex;
-  const rightIdx = (activeIndex + 1) % categories.length;
-
-  const visibleCards = [
-    { cat: categories[leftIdx], pos: "left" },
-    { cat: categories[centerIdx], pos: "center" },
-    { cat: categories[rightIdx], pos: "right" },
-  ];
+  const hasMore = categories.length > MAX_VISIBLE;
+  const gridItems = hasMore ? categories.slice(0, MAX_VISIBLE - 1) : categories.slice(0, MAX_VISIBLE);
+  const [hero, ...rest] = gridItems;
 
   return (
-    <section className="py-12 px-4 md:px-12">
-      <TopHeading heading="Discover Our Essentials" />
+    <section className="cat2-section">
+      <div className="cat2-container">
+        <TopHeading heading="Shop By Ritual" />
 
-      <div
-        className="cat-slider-wrap"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => setIsPaused(false)}
-      >
-        {/* Prev button */}
-        <button
-          className="cat-slider-btn cat-slider-btn--left"
-          onClick={() => manualNav(prev)}
-          aria-label="Previous"
-        >
-          <ChevronLeft size={22} />
-        </button>
+        <div className="cat2-grid">
+          {/* Hero tile */}
+          <div
+            className="cat2-card cat2-card--hero"
+            style={{ animationDelay: "0ms" }}
+            onClick={() => goToShop(hero.categoryName)}
+          >
+            <Image
+              src={hero.image_url}
+              alt={hero.categoryName}
+              fill
+              sizes="(max-width: 900px) 78vw, 40vw"
+              className="cat2-card-img"
+              priority
+            />
+            <div className="cat2-card-overlay" />
+            <span className="cat2-hero-badge">Featured Category</span>
+            <div className="cat2-hero-content">
+              <h3 className="cat2-hero-title">{hero.categoryName}</h3>
+              <button
+                className="cat2-hero-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToShop(hero.categoryName);
+                }}
+              >
+                Shop Now <ArrowRight size={15} />
+              </button>
+            </div>
+          </div>
 
-        {/* Cards track */}
-        <div className="cat-slider-track">
-          {visibleCards.map(({ cat, pos }) => (
+          {/* Remaining tiles */}
+          {rest.map((cat, i) => (
             <div
-              key={`${cat.id}-${pos}`}
-              onClick={() =>
-                pos === "center"
-                  ? goToShop(cat.categoryName)
-                  : manualNav(pos === "left" ? prev : next)
-              }
-              className={`cat-card cat-card--${pos}`}
+              key={cat.id}
+              className="cat2-card"
+              style={{ animationDelay: `${(i + 1) * 90}ms` }}
+              onClick={() => goToShop(cat.categoryName)}
             >
               <Image
                 src={cat.image_url}
                 alt={cat.categoryName}
                 fill
-                className="object-cover cat-card-img"
+                sizes="(max-width: 900px) 78vw, 20vw"
+                className="cat2-card-img"
               />
-              {/* Dark overlay */}
-              <div className="cat-card-overlay" />
-
-              {/* Label */}
-              <div className="cat-card-label">
-                <h3 className="cat-card-name">{cat.categoryName}</h3>
-                {pos === "center" && (
-                  <button
-                    className="cat-card-shop-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      goToShop(cat.categoryName);
-                    }}
-                  >
-                    Shop Now →
-                  </button>
-                )}
+              <div className="cat2-card-overlay" />
+              <div className="cat2-card-caption">
+                <span className="cat2-card-name">{cat.categoryName}</span>
+                <span className="cat2-card-arrow">
+                  <ArrowUpRight size={16} />
+                </span>
               </div>
             </div>
           ))}
+
+          {/* View all tile, only if more categories exist */}
+          {hasMore && (
+            <div
+              className="cat2-card cat2-viewall"
+              style={{ animationDelay: `${gridItems.length * 90}ms` }}
+              onClick={() => goToShop()}
+            >
+              <span className="cat2-viewall-count">+{categories.length - gridItems.length}</span>
+              <span className="cat2-viewall-text">View All</span>
+            </div>
+          )}
         </div>
-
-        {/* Next button */}
-        <button
-          className="cat-slider-btn cat-slider-btn--right"
-          onClick={() => manualNav(next)}
-          aria-label="Next"
-        >
-          <ChevronRight size={22} />
-        </button>
-      </div>
-
-      {/* Dots */}
-      <div className="cat-dots">
-        {categories.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => {
-              manualNav(() => setActiveIndex(i));
-            }}
-            className={`cat-dot ${i === activeIndex ? "cat-dot--active" : ""}`}
-          />
-        ))}
       </div>
     </section>
   );
