@@ -6568,7 +6568,7 @@ li{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #9e8054;
+  background: #fff4e5;
   color: #2b1a06;
   border: none;
   border-radius: 50px;
@@ -6581,7 +6581,7 @@ li{
   font-family: sans-serif;
 
 }
-.cat2-card-btn:hover { background: #f2eee9; color: #2b1a06; transform: translateY(-2px); }
+.cat2-card-btn:hover { background: #cb8836; color: #fff4e5; transform: translateY(-2px); }
 .cat2-card-btn svg { transition: transform .25s; }
 .cat2-card-btn:hover svg { transform: translateX(3px); }
 
