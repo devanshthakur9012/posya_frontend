@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import TopHeading from "./TopHeading";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const MAX_VISIBLE = 5;
+const MAX_VISIBLE = 8;
 
 export default function ProductCategories() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -25,11 +25,8 @@ export default function ProductCategories() {
   }, []);
 
   const goToShop = (categoryName?: string) => {
-    if (categoryName) {
-      router.push(`/shop?category=${encodeURIComponent(categoryName)}`);
-    } else {
-      router.push(`/shop`);
-    }
+    if (categoryName) router.push(`/shop?category=${encodeURIComponent(categoryName)}`);
+    else router.push(`/shop`);
   };
 
   if (loading) {
@@ -38,10 +35,10 @@ export default function ProductCategories() {
         <div className="cat2-container">
           <TopHeading heading="Shop By Ritual" />
           <div className="cat2-grid">
-            {Array.from({ length: 5 }).map((_, i) => (
+            {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className={`cat2-card cat2-skeleton shimmer ${i === 0 ? "cat2-card--hero" : ""}`}
+                className="cat2-card cat2-skeleton shimmer"
                 style={{ animation: "none", opacity: 1 }}
               />
             ))}
@@ -63,8 +60,7 @@ export default function ProductCategories() {
   }
 
   const hasMore = categories.length > MAX_VISIBLE;
-  const gridItems = hasMore ? categories.slice(0, MAX_VISIBLE - 1) : categories.slice(0, MAX_VISIBLE);
-  const [hero, ...rest] = gridItems;
+  const visible = hasMore ? categories.slice(0, MAX_VISIBLE - 1) : categories.slice(0, MAX_VISIBLE);
 
   return (
     <section className="cat2-section">
@@ -72,69 +68,44 @@ export default function ProductCategories() {
         <TopHeading heading="Shop By Ritual" />
 
         <div className="cat2-grid">
-          {/* Hero tile */}
-          <div
-            className="cat2-card cat2-card--hero"
-            style={{ animationDelay: "0ms" }}
-            onClick={() => goToShop(hero.categoryName)}
-          >
-            <Image
-              src={hero.image_url}
-              alt={hero.categoryName}
-              fill
-              sizes="(max-width: 900px) 78vw, 40vw"
-              className="cat2-card-img"
-              priority
-            />
-            <div className="cat2-card-overlay" />
-            <span className="cat2-hero-badge">Featured Category</span>
-            <div className="cat2-hero-content">
-              <h3 className="cat2-hero-title">{hero.categoryName}</h3>
-              <button
-                className="cat2-hero-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  goToShop(hero.categoryName);
-                }}
-              >
-                Shop Now <ArrowRight size={15} />
-              </button>
-            </div>
-          </div>
-
-          {/* Remaining tiles */}
-          {rest.map((cat, i) => (
+          {visible.map((cat, i) => (
             <div
               key={cat.id}
               className="cat2-card"
-              style={{ animationDelay: `${(i + 1) * 90}ms` }}
+              style={{ animationDelay: `${i * 90}ms` }}
               onClick={() => goToShop(cat.categoryName)}
             >
               <Image
                 src={cat.image_url}
                 alt={cat.categoryName}
                 fill
-                sizes="(max-width: 900px) 78vw, 20vw"
+                sizes="(max-width: 900px) 78vw, 33vw"
                 className="cat2-card-img"
+                priority={i === 0}
               />
               <div className="cat2-card-overlay" />
-              <div className="cat2-card-caption">
-                <span className="cat2-card-name">{cat.categoryName}</span>
-                <span className="cat2-card-arrow">
-                  <ArrowUpRight size={16} />
-                </span>
+              <div className="cat2-card-content">
+                <h3 className="cat2-card-title">{cat.categoryName}</h3>
+                <button
+                  className="cat2-card-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToShop(cat.categoryName);
+                  }}
+                >
+                  Shop Now <ArrowRight size={15} />
+                </button>
               </div>
             </div>
           ))}
 
-          {/* View all tile, only if more categories exist */}
           {hasMore && (
             <div
               className="cat2-card cat2-viewall"
-              style={{ animationDelay: `${gridItems.length * 90}ms` }}
+              style={{ animationDelay: `${visible.length * 90}ms` }}
               onClick={() => goToShop()}
             >
-              <span className="cat2-viewall-count">+{categories.length - gridItems.length}</span>
+              <span className="cat2-viewall-count">+{categories.length - visible.length}</span>
               <span className="cat2-viewall-text">View All</span>
             </div>
           )}

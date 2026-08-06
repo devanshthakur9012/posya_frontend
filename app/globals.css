@@ -6469,16 +6469,11 @@ li{
 
 
 /* ============================================
-   CATEGORY SHOWCASE — BENTO GRID
+   CATEGORY SHOWCASE — EQUAL GRID
    Paste into globals.css | prefix: "cat2-"
 ============================================ */
 
-.cat2-section {
-  position: relative;
-  padding: 64px 20px 84px;
-  overflow: hidden;
-}
-
+.cat2-section { position: relative; padding: 64px 20px 84px; overflow: hidden; }
 .cat2-section::before {
   content: "";
   position: absolute;
@@ -6490,43 +6485,36 @@ li{
   background: radial-gradient(circle, rgba(203,136,54,0.14) 0%, rgba(203,136,54,0) 70%);
   pointer-events: none;
 }
+.cat2-container { max-width: 1200px; margin: 0 auto; position: relative; }
 
-.cat2-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-}
+.cat2-heading-block { text-align: center; margin-bottom: 8px; }
+.cat2-heading-accent { color: #cb8836; display: block; }
 
 .cat2-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr;
-  grid-auto-rows: 190px;
-  gap: 18px;
-  margin-top: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-auto-rows: 440px;
+  gap: 20px;
+  margin-top: 36px;
 }
 
 @media (max-width: 900px) {
   .cat2-grid {
+    display: grid;
     grid-auto-flow: column;
     grid-template-columns: none;
     grid-auto-columns: 78%;
-    grid-template-rows: 340px;
+    grid-template-rows: 380px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     padding-bottom: 10px;
-    margin-top: 20px;
+    margin-top: 26px;
     scrollbar-width: none;
   }
   .cat2-grid::-webkit-scrollbar { display: none; }
-  .cat2-card,
-  .cat2-card--hero {
-    scroll-snap-align: start;
-    grid-row: auto !important;
-    grid-column: auto !important;
-  }
+  .cat2-card { scroll-snap-align: start; }
 }
 
-/* Card base */
 .cat2-card {
   position: relative;
   border-radius: 22px;
@@ -6536,26 +6524,17 @@ li{
   opacity: 0;
   animation: cat2FadeUp .6s ease forwards;
 }
-.cat2-card--hero { grid-row: span 2; grid-column: 1; }
 
-.cat2-card-img {
-  object-fit: cover;
-  transition: transform .8s cubic-bezier(0.19,1,0.22,1);
-}
+.cat2-card-img { object-fit: cover; transition: transform .8s cubic-bezier(0.19,1,0.22,1); }
 .cat2-card:hover .cat2-card-img { transform: scale(1.07); }
 
 .cat2-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(20,10,0,.72) 0%, rgba(20,10,0,.08) 55%, transparent 100%);
-  transition: background .4s;
+  background: linear-gradient(to top, rgba(20,10,0,.78) 0%, rgba(20,10,0,.15) 45%, transparent 85%);
   z-index: 0;
 }
-.cat2-card--hero .cat2-card-overlay {
-  background: linear-gradient(to top, rgba(20,10,0,.78) 0%, rgba(20,10,0,.15) 45%, transparent 85%);
-}
 
-/* Signature: offset gold frame on hover */
 .cat2-card::after {
   content: "";
   position: absolute;
@@ -6566,86 +6545,26 @@ li{
   transition: inset .4s ease, border-color .4s ease;
   z-index: 2;
 }
-.cat2-card:hover::after {
-  inset: 15px;
-  border-color: rgba(242,238,233,.5);
-}
+.cat2-card:hover::after { inset: 15px; border-color: rgba(242,238,233,.5); }
 
-/* Small-card frosted caption */
-.cat2-card-caption {
+.cat2-card-content {
   position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 14px;
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(8px);
-  border-radius: 13px;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  z-index: 1;
-}
-.cat2-card-name {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: #2b1a06;
-  line-height: 1.3;
-}
-.cat2-card-arrow {
-  flex-shrink: 0;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #cb8836;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform .3s, background .3s;
-}
-.cat2-card:hover .cat2-card-arrow {
-  background: #2b1a06;
-  transform: rotate(45deg);
-}
-
-/* Hero content */
-.cat2-hero-badge {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  z-index: 1;
-  background: rgba(255,255,255,.92);
-  color: #cb8836;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 6px 14px;
-  border-radius: 50px;
-}
-.cat2-hero-content {
-  position: absolute;
-  left: 24px;
-  right: 24px;
-  bottom: 24px;
+  left: 24px; right: 24px; bottom: 24px;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
 }
-.cat2-hero-title {
+.cat2-card-title {
   font-family: 'Libre Baskerville', serif;
-  font-size: clamp(22px, 2.6vw, 30px);
+  font-size: clamp(20px, 2.2vw, 26px);
   font-weight: 700;
   color: #f2eee9;
   line-height: 1.25;
   max-width: 320px;
 }
-.cat2-hero-btn {
+.cat2-card-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -6660,11 +6579,10 @@ li{
   cursor: pointer;
   transition: background .25s, transform .25s, color .25s;
 }
-.cat2-hero-btn:hover { background: #f2eee9; color: #2b1a06; transform: translateY(-2px); }
-.cat2-hero-btn svg { transition: transform .25s; }
-.cat2-hero-btn:hover svg { transform: translateX(3px); }
+.cat2-card-btn:hover { background: #f2eee9; color: #2b1a06; transform: translateY(-2px); }
+.cat2-card-btn svg { transition: transform .25s; }
+.cat2-card-btn:hover svg { transform: translateX(3px); }
 
-/* "View all" tile */
 .cat2-viewall {
   display: flex;
   flex-direction: column;
@@ -6676,40 +6594,18 @@ li{
   border: 1.5px dashed rgba(203,136,54,.4);
   transition: background .3s;
 }
-.cat2-viewall-count {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 26px;
-  font-weight: 700;
-  color: #cb8836;
-  transition: color .3s;
-}
-.cat2-viewall-text {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #f2eee9;
-  transition: color .3s;
-}
+.cat2-viewall-count { font-family: 'Libre Baskerville', serif; font-size: 26px; font-weight: 700; color: #cb8836; transition: color .3s; }
+.cat2-viewall-text { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #f2eee9; transition: color .3s; }
 .cat2-viewall:hover { background: #cb8836; }
 .cat2-viewall:hover .cat2-viewall-count,
 .cat2-viewall:hover .cat2-viewall-text { color: #fff; }
 
 .cat2-skeleton { border-radius: 22px; }
+.cat2-empty { text-align: center; padding: 60px 20px; color: #a89070; font-size: 14px; }
 
-.cat2-empty {
-  text-align: center;
-  padding: 60px 20px;
-  color: #a89070;
-  font-size: 14px;
-}
-
-@keyframes cat2FadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+@keyframes cat2FadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (prefers-reduced-motion: reduce) {
   .cat2-card { animation: none !important; opacity: 1 !important; }
-  .cat2-card-img, .cat2-card::after, .cat2-hero-btn, .cat2-card-arrow { transition: none !important; }
+  .cat2-card-img, .cat2-card::after, .cat2-card-btn { transition: none !important; }
 }
